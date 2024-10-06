@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { LoaderCircle } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Credito() {
   const { address: userAddress } = useAccount()
@@ -44,11 +45,47 @@ export default function Credito() {
               <CardHeader className="pb-2">
                 <CardTitle>Talent Passport</CardTitle>
               </CardHeader>
-              <CardContent className="flex gap-x-4">
+              <CardContent className="flex flex-col gap-x-4">
                 <div className="w-full">
                   <BuilderScoreChart
                     builderScore={talentPassportData?.score ?? 0}
                   />
+                </div>
+                <div className="px-6">
+                  <ul className="text-left">
+                    <li className="text-xl font-semibold">
+                      Actividad: {talentPassportData?.activity_score}
+                    </li>
+                    <li className="text-xl font-semibold">
+                      Identidad: {talentPassportData?.identity_score}
+                    </li>
+                    <li className="text-xl font-semibold">
+                      Habilidades: {talentPassportData?.skills_score}
+                    </li>
+                    <li className="text-xl font-semibold">
+                      Humano:{' '}
+                      {talentPassportData?.human_checkmark
+                        ? 'Sí'
+                        : 'No verificado'}
+                    </li>
+                    {talentPassportData?.last_calculated_at && (
+                      <li className="text-xl font-semibold">
+                        Última actualización:{' '}
+                        {new Date(
+                          talentPassportData?.last_calculated_at,
+                        ).toLocaleDateString('es-MX', {
+                          year: 'numeric',
+                          month: 'long', // full month name
+                          day: 'numeric',
+                        })}
+                      </li>
+                    )}
+                  </ul>
+                </div>
+                <div className="p-4">
+                  <Link href="/credito">
+                    <Button size="lg">Solicitar Crédito</Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

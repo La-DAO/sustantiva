@@ -87,7 +87,7 @@ export default function Cartera() {
                   <span className="text-xl">desde </span>3.69%
                 </h3>
                 <div className="flex items-center justify-center gap-x-6">
-                  <Link href="/credito">
+                  <Link href="/reputacion">
                     <Button className="text-lg">Quiero $1,000 MXN</Button>
                   </Link>
                 </div>
