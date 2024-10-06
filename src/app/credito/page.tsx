@@ -1,10 +1,8 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
 import PageWithAppbar from '@/components/layout/pageWithAppbar'
+import { Card, CardContent } from '@/components/ui/card'
 import { BuilderScoreChart } from './builder-score-chart'
-
-export const description = 'A collection of health charts.'
 
 export default function Credito() {
   return (
