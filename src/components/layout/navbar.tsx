@@ -54,9 +54,9 @@ export default function Navbar() {
               .map((menuItem, index) => (
                 <Link
                   key={`${menuItem.displayText}-menuItem-${index}`}
-                  className={`hover:text-primary focus:text-primary inline-flex items-center justify-center px-4 py-2 text-lg font-medium text-white transition-colors focus:outline-none ${
+                  className={`inline-flex items-center justify-center px-4 py-2 text-lg font-medium text-white transition-colors hover:text-primary focus:text-primary focus:outline-none ${
                     pathname === menuItem.href &&
-                    'decoration-primary pointer-events-none underline decoration-[1.5px] underline-offset-[6px] hover:!text-foreground'
+                    'pointer-events-none underline decoration-primary decoration-[1.5px] underline-offset-[6px] hover:!text-foreground'
                   }`}
                   href={menuItem.href}
                 >
@@ -68,7 +68,10 @@ export default function Navbar() {
         <div className="hidden lg:flex lg:justify-end">
           <AuthButton />
         </div>
-        <MobileMenu menuItems={MENU_ITEMS} pathname={pathname} />
+        <MobileMenu
+          menuItems={isLoggedIn ? AUTH_MENU_ITEMS : MENU_ITEMS}
+          pathname={pathname}
+        />
       </div>
     </header>
   )

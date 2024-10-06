@@ -11,21 +11,24 @@ import { ChartConfig, ChartContainer } from '@/components/ui/chart'
 
 export const description = 'A radial chart with text'
 
-const chartData = [
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-]
-
 const chartConfig = {
-  visitors: {
-    label: 'Visitors',
+  points: {
+    label: 'Puntos',
   },
   safari: {
     label: 'Safari',
-    color: 'hsl(var(--chart-2))',
+    color: 'hsl(var(--primary))',
   },
 } satisfies ChartConfig
 
-export function BuilderScoreChart() {
+export function BuilderScoreChart({
+  builderScore = 0,
+}: {
+  builderScore: number
+}) {
+  const chartData = [
+    { browser: 'safari', points: builderScore, fill: 'var(--color-safari)' },
+  ]
   return (
     <ChartContainer
       config={chartConfig}
@@ -33,8 +36,8 @@ export function BuilderScoreChart() {
     >
       <RadialBarChart
         data={chartData}
-        startAngle={0}
-        endAngle={250}
+        startAngle={90}
+        endAngle={(builderScore / 100) * 360 + 90}
         innerRadius={80}
         outerRadius={110}
       >
@@ -45,7 +48,7 @@ export function BuilderScoreChart() {
           className="first:fill-muted last:fill-background"
           polarRadius={[86, 74]}
         />
-        <RadialBar dataKey="visitors" background cornerRadius={10} />
+        <RadialBar dataKey="points" background cornerRadius={10} />
         <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
           <Label
             content={({ viewBox }) => {
@@ -62,14 +65,14 @@ export function BuilderScoreChart() {
                       y={viewBox.cy}
                       className="fill-foreground text-4xl font-bold"
                     >
-                      {chartData[0].visitors.toLocaleString()}
+                      {chartData[0].points.toLocaleString()}
                     </tspan>
                     <tspan
                       x={viewBox.cx}
                       y={(viewBox.cy || 0) + 24}
                       className="fill-muted-foreground"
                     >
-                      Visitors
+                      Puntos
                     </tspan>
                   </text>
                 )
