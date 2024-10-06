@@ -13,7 +13,7 @@ import { http } from 'viem'
 import { base, mainnet, sepolia } from 'viem/chains'
 import { useRouter } from 'next/navigation'
 
-const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_ID ?? undefined
+const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API ?? undefined
 
 const config = createConfig({
   chains: [base, mainnet, sepolia],
