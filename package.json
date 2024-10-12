@@ -6,13 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@dynamic-labs/ethereum": "^3.1.2",
     "@dynamic-labs/sdk-react-core": "^3.1.2",
     "@dynamic-labs/wagmi-connector": "^3.1.2",
     "@hookform/resolvers": "^3.9.0",
+    "@prisma/client": "^5.20.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
@@ -54,6 +56,7 @@
     "postcss": "^8",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
+    "prisma": "^5.20.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
