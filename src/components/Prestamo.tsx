@@ -19,6 +19,7 @@ import { PassportProfileExtended } from '@/types/api'
 import { toast } from 'sonner'
 import { useWriteContract } from 'wagmi'
 import CreditTalentCenterABI from '@/components/onchain/abis/CreditTalentCenter'
+import { ethers } from 'ethers';
 
 export default function Prestamo({
   totalLimit = 0,
@@ -96,7 +97,7 @@ export default function Prestamo({
         address: '0x0E44B48406b5E7Bba4E6d089542719Cb2577d444',
         abi: CreditTalentCenterABI,
         functionName: 'applyToCredit',
-        args: ["0x01"],
+        args: [`${convertToBytes32(1)}`],
       })
       if (isSuccess) {
         console.log('Application successful:', data)
@@ -105,7 +106,7 @@ export default function Prestamo({
       console.error('Application failed:', error)
     }
     console.log("despues de write contract")
-  } */
+  }
 
   return (
     <Card className="mx-auto w-full">
@@ -170,16 +171,7 @@ export default function Prestamo({
       <CardFooter>
         <div className="mx-auto flex items-center justify-center gap-x-6">
           <Button
-            onClick={() => {
-              writeContract({
-                address: '0x0E44B48406b5E7Bba4E6d089542719Cb2577d444',
-                abi: CreditTalentCenterABI,
-                functionName: 'applyToCredit',
-                args: [
-                  '0x0000000000000000000000000000000000000000000000000000000000000001',
-                ],
-              })
-            }}
+            onClick={handleApplication}
             className="text-lg"
             disabled={status === 'pending'}
             onClick={handleCreateLoanApplication}
