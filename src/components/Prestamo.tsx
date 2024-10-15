@@ -17,6 +17,8 @@ import { createLoanApplication } from '@/services/loanApplication'
 import { useRouter } from 'next/navigation'
 import { PassportProfileExtended } from '@/types/api'
 import { toast } from 'sonner'
+import { useWriteContract } from 'wagmi'
+import CreditTalentCenterABI from '@/components/onchain/abis/CreditTalentCenter'
 
 export default function Prestamo({
   totalLimit = 0,
@@ -31,6 +33,8 @@ export default function Prestamo({
   const [toggleValue, setToggleValue] = useState('prestamo')
   const router = useRouter()
   const maxLoan = totalLimit ?? 0
+
+  const { writeContract, data, isSuccess } = useWriteContract()
 
   const handleSliderChange = (value: number[]) => {
     setLoanAmount(Math.round(value[0]))
@@ -84,6 +88,24 @@ export default function Prestamo({
       }
     }
   }
+
+  /*   const handleApplication = () => {
+    console.log("Antes de write contract")
+    try {
+      writeContract({
+        address: '0x0E44B48406b5E7Bba4E6d089542719Cb2577d444',
+        abi: CreditTalentCenterABI,
+        functionName: 'applyToCredit',
+        args: ["0x01"],
+      })
+      if (isSuccess) {
+        console.log('Application successful:', data)
+      }
+    } catch (error) {
+      console.error('Application failed:', error)
+    }
+    console.log("despues de write contract")
+  } */
 
   return (
     <Card className="mx-auto w-full">
