@@ -170,6 +170,16 @@ export default function Prestamo({
       <CardFooter>
         <div className="mx-auto flex items-center justify-center gap-x-6">
           <Button
+            onClick={() => {
+              writeContract({
+                address: '0x0E44B48406b5E7Bba4E6d089542719Cb2577d444',
+                abi: CreditTalentCenterABI,
+                functionName: 'applyToCredit',
+                args: [
+                  '0x0000000000000000000000000000000000000000000000000000000000000001',
+                ],
+              })
+            }}
             className="text-lg"
             disabled={status === 'pending'}
             onClick={handleCreateLoanApplication}
