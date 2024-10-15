@@ -10,30 +10,16 @@ import { EthereumWalletConnectors } from '@dynamic-labs/ethereum'
 import { DynamicWagmiConnector } from '@dynamic-labs/wagmi-connector'
 import { createConfig, WagmiProvider } from 'wagmi'
 import { http } from 'viem'
-import { base, baseSepolia, mainnet } from 'viem/chains'
+import { baseSepolia } from 'viem/chains'
 import { useRouter } from 'next/navigation'
 
 const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API ?? undefined
 
 const config = createConfig({
-  chains: [base, baseSepolia, mainnet],
+  chains: [baseSepolia],
   multiInjectedProviderDiscovery: false,
   transports: {
-    [base.id]: http(
-      alchemyApiKey
-        ? `https://base-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
-        : '',
-    ),
-    [baseSepolia.id]: http(
-      alchemyApiKey
-        ? `https://base-sepolia.g.alchemy.com/v2/${alchemyApiKey}`
-        : '',
-    ),
-    [mainnet.id]: http(
-      alchemyApiKey
-        ? `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
-        : '',
-    ),
+    [baseSepolia.id]: http('https://sepolia.base.org'),
   },
 })
 
