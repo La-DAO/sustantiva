@@ -10,10 +10,23 @@ import SynopsisCredito from '@/components/SynopsisCredito'
 import Talent from '@/components/Talent'
 import AboutPool from '@/components/AboutPool'
 import Ecosistema from '@/components/Ecosistema'
+import { useQuery } from '@tanstack/react-query'
+import { fetchPassportProfile } from '@/services/passportProfile'
+import { useAccount } from 'wagmi'
 
 export default function Credito() {
   const [basename, setBasename] = useState('')
   const { user } = useDynamicContext()
+  const { address: userAddress } = useAccount()
+
+  const { data: passportProfileData, status: passportProfileQueryStatus } =
+    useQuery({
+      queryKey: ['passportProfileKey'],
+      queryFn: () => fetchPassportProfile(userAddress as string),
+      enabled: Boolean(userAddress),
+    })
+
+  console.log(passportProfileData)
 
   return (
     <PageWithAppbar>

@@ -5,7 +5,7 @@ import {
   getAllCreditLines,
   updateCreditLineById,
   deleteCreditLineById,
-} from '@/services/creditLine'
+} from '@/controllers/creditLine'
 
 // Create a new CreditLine or Get All CreditLines
 export async function POST(request: Request) {

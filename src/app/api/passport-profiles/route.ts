@@ -5,7 +5,8 @@ import {
   getAllPassportProfiles,
   updatePassportProfileById,
   deletePassportProfileById,
-} from '@/services/passportProfile'
+  getPassportProfileByWalletId,
+} from '@/controllers/passportProfile'
 
 // Create or Get All PassportProfiles
 export async function POST(request: Request) {
@@ -15,6 +16,7 @@ export async function POST(request: Request) {
     return NextResponse.json(newProfile, { status: 201 })
   } catch (error) {
     if (error instanceof Error) {
+      console.log(error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
       return NextResponse.json(
@@ -27,11 +29,11 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const id = searchParams.get('id')
+  const walletId = searchParams.get('walletId')
 
   try {
-    if (id) {
-      const profile = await getPassportProfileById(Number(id))
+    if (walletId) {
+      const profile = await getPassportProfileByWalletId(walletId)
       return NextResponse.json(profile, { status: 200 })
     } else {
       const profiles = await getAllPassportProfiles()
@@ -39,6 +41,7 @@ export async function GET(request: Request) {
     }
   } catch (error) {
     if (error instanceof Error) {
+      console.log(error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
       return NextResponse.json(
@@ -57,6 +60,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json(updatedProfile, { status: 200 })
   } catch (error) {
     if (error instanceof Error) {
+      console.log(error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
       return NextResponse.json(
@@ -80,6 +84,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json(deletedProfile, { status: 200 })
   } catch (error) {
     if (error instanceof Error) {
+      console.log(error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
       return NextResponse.json(

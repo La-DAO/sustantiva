@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BuilderScoreChart } from '@/app/reputacion/builder-score-chart'
 import { useQuery } from '@tanstack/react-query'
-import { fetchTalentPassport } from '@/services/talentProtocolApi'
+import { fetchTalentPassport } from '@/controllers/talentProtocolApi'
 import { useAccount } from 'wagmi'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
