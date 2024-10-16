@@ -5,7 +5,7 @@ import {
   getAllPayments,
   updatePaymentById,
   deletePaymentById,
-} from '@/services/payment'
+} from '@/controllers/payment'
 
 // Create a new Payment or Get All Payments
 export async function POST(request: Request) {

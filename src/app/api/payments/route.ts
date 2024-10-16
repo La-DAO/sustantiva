@@ -5,7 +5,7 @@ import {
   getAllLoans,
   updateLoanById,
   deleteLoanById,
-} from '@/services/loan'
+} from '@/controllers/loan'
 
 // Create a new Loan or Get All Loans
 export async function POST(request: Request) {
