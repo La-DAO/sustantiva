@@ -19,7 +19,8 @@ import { PassportProfileExtended } from '@/types/api'
 import { toast } from 'sonner'
 import { useWriteContract } from 'wagmi'
 import CreditTalentCenterABI from '@/components/onchain/abis/CreditTalentCenter'
-import { ethers } from 'ethers';
+import { toHex, pad } from 'viem';
+
 
 export default function Prestamo({
   totalLimit = 0,

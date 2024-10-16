@@ -20,26 +20,35 @@ export default function HelpNeeded() {
               Estamos aquí para <span className="text-primary">ayudarte</span>
             </h2>
             <p className="text-gray-500 md:text-lg">
-              We know that life is not perfect. But if all it takes is a bit of
-              cash to make life just a little easier, Brighter Loans has you
-              covered. Need extra funds to finish up a costly renovation?
-              We&apos;ve got you covered. Need to take an emergency trip to
-              visit a loved one overseas? We&apos;ve got you covered. Need cash
-              to pay an expensive hospital bill? We&apos;ve got you covered!
+              Sabemos que la vida no es perfecta. Pero si todo lo que se
+              necesita es un poco de dinero para hacer la vida un poco más
+              fácil, Creditalent te tiene cubierto. ¿Necesitas fondos
+              adicionales para terminar una costosa renovación? Te tenemos
+              cubierto. ¿Necesitas hacer un viaje de emergencia para visitar a
+              un ser querido en el extranjero? Te tenemos cubierto. ¿Necesitas
+              dinero para pagar una costosa factura hospitalaria? ¡Te tenemos
+              cubierto!
             </p>
             <p className="text-gray-500 md:text-lg">
-              Whether night or day, we help you to connect with a lender
-              directly. We work around the clock! With a large network of
-              lenders, we are sure you will find our service a great solution in
-              time of need.
+              Ya sea de noche o de día, te ayudamos a conectarte directamente
+              con un prestamista. ¡Trabajamos las 24 horas del día! Con una gran
+              red de prestamistas, estamos seguros de que encontrarás nuestro
+              servicio una gran solución en momentos de necesidad.
             </p>
             <p className="font-semibold">
-              Submit your information to see if you can get a loan up to
-              $35,000.
+              Conecta tu cartera para ver si puedes obtener un préstamo de hasta
+              $1,500 XOC.
             </p>
             <div className="flex w-full justify-center">
               <Button size="lg" className="mt-4">
-                Get Started Now →
+                <a
+                  href="https://t.me/+fPuMaOwBkUU5ZTgx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full"
+                >
+                  Unete al grupo →
+                </a>
               </Button>
             </div>
           </div>

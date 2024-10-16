@@ -24,11 +24,11 @@ export default function Benefits() {
               <h3 className="mb-2 text-xl font-semibold">
                 Conecta tu pasaporte
               </h3>
-              <p className="text-gray-500">
-                All paperwork is done online. The whole process is completely
-                digital. Just fill in a few details about yourself and hit
-                &quot;Get started&quot;.
-              </p>
+                <p className="text-gray-500">
+                Todo el papeleo se realiza en línea. Todo el proceso es
+                completamente digital. Solo llena algunos detalles sobre ti y
+                haz clic en &quot;Comenzar&quot;.
+                </p>
             </div>
           </div>
           <div className="flex flex-col items-center justify-between text-center">
@@ -43,11 +43,10 @@ export default function Benefits() {
             </div>
             <div className="space-y-2">
               <h3 className="mb-2 text-xl font-semibold">Proceso Rápido</h3>
-              <p className="text-gray-500">
-                The online form usually takes less than 10 minutes to complete.
-                So before you even finish your coffee, you could already have
-                your request submitted.
-              </p>
+                <p className="text-gray-500">
+                El formulario en línea generalmente toma menos de 10 minutos en completarse.
+                Así que antes de que termines tu café, ya podrías haber enviado tu solicitud.
+                </p>
             </div>
           </div>
           <div className="flex flex-col items-center justify-between text-center">
@@ -62,11 +61,10 @@ export default function Benefits() {
             </div>
             <div className="space-y-2">
               <h3 className="mb-2 text-xl font-semibold">Lana Instantánea</h3>
-              <p className="text-gray-500">
-                Once your profile is reviewed, get your offer and accept it.
-                You&apos;ll be able to get the funds in your account in
-                real-time, and use that money to pay for services.
-              </p>
+                <p className="text-gray-500">
+                Una vez que tu perfil sea revisado, obtén tu oferta y acéptala.
+                Podrás recibir los fondos en tu cuenta en tiempo real y usar ese dinero para pagar servicios.
+                </p>
             </div>
           </div>
         </div>
