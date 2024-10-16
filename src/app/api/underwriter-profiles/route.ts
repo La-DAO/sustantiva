@@ -5,7 +5,7 @@ import {
   getAllUnderwriterProfiles,
   updateUnderwriterProfileById,
   deleteUnderwriterProfileById,
-} from '@/services/underwriterProfile'
+} from '@/controllers/underwriterProfile'
 
 // Create or Get All UnderwriterProfiles
 export async function POST(request: Request) {

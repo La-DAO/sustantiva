@@ -1,27 +1,24 @@
+import { CreatePassportProfileData } from '@/types/api'
 import prisma from '@/utils/prisma'
 
 // Create a new PassportProfile
-export const createPassportProfile = async (data: {
-  walletId: string
-  talentPassportId: number
-  talentUserId: string
-  name: string
-  profilePictureUrl: string
-  verified: boolean
-  humanCheck: boolean
-  score: number
-  activityScore: number
-  identityScore: number
-  skillsScore: number
-  nominationsReceived: number
-  socialsLinked: number
-  followerCount: number
-}) => {
+export const createPassportProfile = async (
+  data: CreatePassportProfileData,
+) => {
   try {
-    const newProfile = await prisma.passportProfile.create({
-      data,
+    const existingProfile = await prisma.passportProfile.findFirst({
+      where: {
+        walletId: data.walletId,
+      },
     })
-    return newProfile
+    if (existingProfile) {
+      return existingProfile
+    } else {
+      const newProfile = await prisma.passportProfile.create({
+        data,
+      })
+      return newProfile
+    }
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error creating PassportProfile: ${error.message}`)
@@ -36,6 +33,23 @@ export const getPassportProfileById = async (id: number) => {
   try {
     const profile = await prisma.passportProfile.findUnique({
       where: { id },
+    })
+    if (!profile) throw new Error('Profile not found')
+    return profile
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error retrieving PassportProfile: ${error.message}`)
+    } else {
+      throw new Error(`Unknown error occurred`)
+    }
+  }
+}
+
+// Retrieve a PassportProfile by ID
+export const getPassportProfileByWalletId = async (walletId: string) => {
+  try {
+    const profile = await prisma.passportProfile.findFirst({
+      where: { walletId },
     })
     if (!profile) throw new Error('Profile not found')
     return profile
