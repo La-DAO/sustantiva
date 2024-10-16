@@ -3,17 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 const companies = [
   {
     name: "Chipi Pay",
-    image: "/logos/ChipiPay.png?height=200&width=300",
+    image: "/logos/chipi-chunky.png?height=200&width=300",
     alt: "Paga con Criptos graffiti"
   },
   {
     name: "Basenames",
-    image: "/logos/Basenames.png?height=200&width=300",
+    image: "/logos/hermosillo-base.svg?height=200&width=300",
     alt: "Basenames search interface"
   },
   {
     name: "Bando",
-    image: "/logos/Bando.png?height=200&width=300",
+    image: "/logos/xoc-bando.jpeg?height=200&width=300",
     alt: "Bando crypto transfer promotion"
   }
 ]
@@ -33,7 +33,7 @@ export default function Component() {
                     <img 
                         src={company.image} 
                         alt={company.alt}
-                        className="w-full h-48 object-cover rounded-md"
+                        className="w-full h-48 object-contain rounded-md"
                     />
                     </div>
                 ))}
