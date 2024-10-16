@@ -23,18 +23,18 @@ export default function Hero() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col items-center">
-                      <div className="mt-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl text-white md:h-24 md:w-24 md:text-4xl">
+                        <div className="mt-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl font-bold text-white md:h-24 md:w-24 md:text-4xl">
                         77
-                      </div>
+                        </div>
                       <div className="mt-2 text-center text-lg leading-none text-foreground">
                         Builder Score
                       </div>
                     </div>
-                    <div className="mb-8 text-4xl font-bold text-foreground">
+                    <div className="mb-8 text-6xl font-bold text-foreground">
                       =
                     </div>
                     <div className="flex flex-col items-center">
-                      <div className="text-4xl font-semibold text-foreground md:text-5xl">
+                      <div className="text-4xl font-semibold text-foreground md:text-5xl mt-10 mb-5">
                         $1,500
                         <span className="text-base font-bold">MXN</span>
                       </div>
