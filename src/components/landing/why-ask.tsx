@@ -4,7 +4,7 @@ export default function WhyAsk() {
   const reasons = [
     'Ir al cine (Chipi Pay)',
     'Comprar una recarga al cel (Chipi Pay)',
-    'Comprar una giftcard (Chiply Pay)',
+    'Comprar una giftcard (Chipi Pay)',
     'Invertir en DeFi (Alux)',
     'Sin procesos complicados',
     'Úsalo para lo que quieras',
