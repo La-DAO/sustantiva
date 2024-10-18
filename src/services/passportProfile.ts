@@ -2,11 +2,11 @@ import { CreatePassportProfileData } from '@/types/api'
 import { PassportProfile } from '@prisma/client'
 
 export const fetchPassportProfile = async (
-  walletId: string,
+  dynamicWallet: string,
 ): Promise<PassportProfile | null> => {
   try {
     const response = await fetch(
-      `/api/passport-profiles?walletId=${walletId}`,
+      `/api/passport-profiles?dynamicWallet=${dynamicWallet}`,
       {
         method: 'GET',
         headers: {

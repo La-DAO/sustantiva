@@ -12,14 +12,17 @@ import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Wallet } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
 
-export default function Prestamo() {
-  const searchParams = useSearchParams()
-  const creditAllowed = searchParams.get('creditAllowed')
-  const [loanAmount, setLoanAmount] = useState(parseInt(creditAllowed ?? '0'))
+export default function Prestamo({
+  totalLimit = 0,
+  xocBalance = 0,
+}: {
+  totalLimit?: number
+  xocBalance?: number
+}) {
+  const [loanAmount, setLoanAmount] = useState(totalLimit ?? 0)
   const [toggleValue, setToggleValue] = useState('prestamo')
-  const maxLoan = parseInt(creditAllowed ?? '0') // 95% of 2450 / 0.95
+  const maxLoan = totalLimit ?? 0
 
   const handleSliderChange = (value: number[]) => {
     setLoanAmount(Math.round(value[0]))
@@ -35,7 +38,7 @@ export default function Prestamo() {
         <div className="mx-auto max-w-lg">
           <div className="mb-6 rounded-lg bg-white p-3">
             <p className="text-2xl font-bold">
-              $1,500 <span className="text-sm font-normal">MXN</span>
+              {totalLimit} <span className="text-sm font-normal">MXN</span>
             </p>
           </div>
           <ToggleGroup
@@ -66,7 +69,7 @@ export default function Prestamo() {
               </div>
               <div className="flex items-center">
                 <Wallet className="mr-1 h-4 w-4" />
-                <span className="text-sm">0.34</span>
+                <span className="text-sm">{Number(xocBalance).toFixed(2)}</span>
               </div>
             </div>
           </div>
