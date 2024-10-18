@@ -1,4 +1,5 @@
 'use client'
+
 import {
   Table,
   TableBody,
@@ -8,103 +9,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import PageWithAppbar from '@/components/layout/pageWithAppbar'
 import { Button } from '@/components/ui/button'
-import { LoanApplication, PassportProfile } from '@prisma/client'
+import { useQuery } from '@tanstack/react-query'
+import { fetchLoanApplications } from '@/services/loanApplication'
+import { LoanApplicationExtended } from '@/types/api'
 
-interface LoanAppExtended extends LoanApplication {
-  creditLine: { totalLimit: number }
-  applicant: PassportProfile
-}
-
-const mockLoanApplications: LoanAppExtended[] = [
-  {
-    id: 1,
-    applicantId: 123,
-    walletId: '0x123456789abcdef...',
-    amount: 1500.5,
-    status: 'PENDING',
-    xocScore: 0,
-    builderScore: 88,
-    followers: 3069,
-    availableCreditLine: 1500,
-    creditLineId: 1,
-    nominationsReceived: 51,
-    createdAt: new Date('2024-04-14T12:00:00Z'),
-    updatedAt: new Date('2024-04-14T13:00:00Z'),
-    creditLine: {
-      totalLimit: 1500.5,
-    },
-    reviewedById: null,
-    applicant: {
-      id: 123,
-      dynamicUserId: '2034fj3qjf',
-      dynamicWallet: '0x123456789abcdef...',
-      mainWallet: '0x123456789abcdef...',
-      verifiedWallets: [],
-      talentPassportId: 456,
-      talentUserId: 'user123',
-      name: 'Alice',
-      profilePictureUrl: 'https://example.com/avatar.png',
-      verified: true,
-      humanCheck: true,
-      score: 85,
-      activityScore: 90,
-      identityScore: 80,
-      skillsScore: 95,
-      nominationsReceived: 25,
-      socialsLinked: 3,
-      followerCount: 500,
-      createdAt: new Date('2024-04-10T10:00:00Z'),
-      updatedAt: new Date('2024-04-12T11:00:00Z'),
-    },
-  },
-  {
-    id: 2,
-    applicantId: 456,
-    walletId: '0xabcdef0123456789...',
-    amount: 1000.0,
-    status: 'APPROVED',
-    xocScore: 0,
-    builderScore: 88,
-    followers: 3069,
-    availableCreditLine: 1500,
-    creditLineId: 1,
-    nominationsReceived: 51,
-    createdAt: new Date('2024-04-13T14:00:00Z'),
-    updatedAt: new Date('2024-04-13T15:00:00Z'),
-    creditLine: {
-      totalLimit: 1500.5,
-    },
-    reviewedById: null,
-    applicant: {
-      id: 456,
-      dynamicUserId: '2034fj3qjf',
-      dynamicWallet: '0x123456789abcdef...',
-      mainWallet: '0x123456789abcdef...',
-      verifiedWallets: [],
-      talentPassportId: 789,
-      talentUserId: 'user456',
-      name: 'Bob',
-      profilePictureUrl: 'https://example.com/avatar2.png',
-      verified: false,
-      humanCheck: true,
-      score: 70,
-      activityScore: 75,
-      identityScore: 60,
-      skillsScore: 75,
-      nominationsReceived: 10,
-      socialsLinked: 2,
-      followerCount: 200,
-      createdAt: new Date('2024-04-09T18:00:00Z'),
-      updatedAt: new Date('2024-04-11T19:00:00Z'),
-    },
-  },
-]
-
-const handleApprove = async (loanAplication: LoanAppExtended) => {
+const handleApprove = async (loanAplication: LoanApplicationExtended) => {
   console.log('🚀 ~ handleApprove ~ loanAplication:', loanAplication)
   try {
     // TODO: call to contract approve
@@ -113,7 +25,7 @@ const handleApprove = async (loanAplication: LoanAppExtended) => {
   }
 }
 
-const handleDeny = async (loanAplication: LoanAppExtended) => {
+const handleDeny = async (loanAplication: LoanApplicationExtended) => {
   console.log('🚀 ~ handleDeny ~ loanAplication:', loanAplication)
   try {
     // TODO: call to contract deny
@@ -123,29 +35,18 @@ const handleDeny = async (loanAplication: LoanAppExtended) => {
 }
 
 export default function WhiteList() {
-  const [loanAplications, setLoanApplications] = useState<LoanAppExtended[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: loanApplicationsData, status: loanApplicationsQueryStatus } =
+    useQuery({
+      queryKey: ['loanApplicationsKey'],
+      queryFn: () => fetchLoanApplications(),
+    })
 
-  useEffect(() => {
-    const fetchWhitelist = async () => {
-      try {
-        // TODO: call to API
-        setLoanApplications(mockLoanApplications)
-        setIsLoading(false)
-      } catch (error) {
-        console.error('Error fetching whitelist:', error)
-        setIsLoading(false)
-      }
-    }
-
-    fetchWhitelist()
-  }, [])
   return (
     <PageWithAppbar>
       <div className="page gap-y-8 px-8 text-center">
         <h2>Solicitudes</h2>
         {/* Table Structure */}
-        {isLoading ? (
+        {loanApplicationsQueryStatus === 'pending' ? (
           <div className="text-center">Cargando...</div>
         ) : (
           <Table className="w-full border-collapse hover:bg-transparent">
@@ -178,7 +79,9 @@ export default function WhiteList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loanAplications.map((item) => (
+              {(
+                loanApplicationsData as unknown as LoanApplicationExtended[]
+              )?.map((item) => (
                 <TableRow key={item?.id}>
                   <TableCell className="">
                     {item?.applicant?.humanCheck ? (

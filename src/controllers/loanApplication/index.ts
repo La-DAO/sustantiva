@@ -48,7 +48,12 @@ export const getLoanApplicationById = async (id: number) => {
 // Retrieve all LoanApplications
 export const getAllLoanApplications = async () => {
   try {
-    const loanApplications = await prisma.loanApplication.findMany()
+    const loanApplications = await prisma.loanApplication.findMany({
+      include: {
+        applicant: true,
+        creditLine: true,
+      },
+    })
     return loanApplications
   } catch (error) {
     if (error instanceof Error) {

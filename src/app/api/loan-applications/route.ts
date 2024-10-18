@@ -14,6 +14,7 @@ export async function POST(request: Request) {
     const newLoanApplication = await createLoanApplication(body)
     return NextResponse.json(newLoanApplication, { status: 201 })
   } catch (error) {
+    console.log(error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
@@ -38,6 +39,7 @@ export async function GET(request: Request) {
       return NextResponse.json(loanApplications, { status: 200 })
     }
   } catch (error) {
+    console.log(error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
@@ -59,6 +61,7 @@ export async function PATCH(request: Request) {
     )
     return NextResponse.json(updatedLoanApplication, { status: 200 })
   } catch (error) {
+    console.log(error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
@@ -82,6 +85,7 @@ export async function DELETE(request: Request) {
     const deletedLoanApplication = await deleteLoanApplicationById(Number(id))
     return NextResponse.json(deletedLoanApplication, { status: 200 })
   } catch (error) {
+    console.log(error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     } else {
