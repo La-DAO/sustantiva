@@ -60,10 +60,15 @@ export const getPassportProfileById = async (id: number) => {
 }
 
 // Retrieve a PassportProfile by ID
-export const getPassportProfileByWalletId = async (dynamicUserId: string) => {
+export const getPassportProfileByWalletId = async (dynamicWallet: string) => {
   try {
     const profile = await prisma.passportProfile.findFirst({
-      where: { dynamicUserId },
+      where: { dynamicWallet },
+      include: {
+        creditLine: true,
+        loans: true,
+        loanApplications: true,
+      },
     })
     if (!profile) throw new Error('Profile not found')
     return profile
