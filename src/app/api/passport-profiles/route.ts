@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const walletId = searchParams.get('walletId')
+  const walletId = searchParams.get('dynamicWallet')
 
   try {
     if (walletId) {
