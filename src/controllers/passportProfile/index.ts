@@ -8,18 +8,32 @@ export const createPassportProfile = async (
   try {
     const existingProfile = await prisma.passportProfile.findFirst({
       where: {
-        walletId: data.walletId,
+        dynamicUserId: data.dynamicUserId,
       },
     })
     if (existingProfile) {
       return existingProfile
     } else {
+      const totalLimit = data.totalLimit ?? 0
+      delete data['totalLimit']
       const newProfile = await prisma.passportProfile.create({
-        data,
+        data: {
+          ...data,
+        },
       })
-      return newProfile
+
+      const newCreditLine = await prisma.creditLine.create({
+        data: {
+          walletId: data.dynamicWallet,
+          totalLimit,
+          availableLimit: totalLimit,
+          borrowerId: newProfile.id,
+        },
+      })
+      return { newProfile, newCreditLine }
     }
   } catch (error) {
+    console.log(error)
     if (error instanceof Error) {
       throw new Error(`Error creating PassportProfile: ${error.message}`)
     } else {
@@ -46,10 +60,10 @@ export const getPassportProfileById = async (id: number) => {
 }
 
 // Retrieve a PassportProfile by ID
-export const getPassportProfileByWalletId = async (walletId: string) => {
+export const getPassportProfileByWalletId = async (dynamicUserId: string) => {
   try {
     const profile = await prisma.passportProfile.findFirst({
-      where: { walletId },
+      where: { dynamicUserId },
     })
     if (!profile) throw new Error('Profile not found')
     return profile

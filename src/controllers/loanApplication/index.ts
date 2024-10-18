@@ -12,6 +12,7 @@ export const createLoanApplication = async (data: {
   status?: 'PENDING' | 'APPROVED' | 'REJECTED'
   reviewedById: number
   applicantId: number
+  creditLineId: number
 }) => {
   try {
     const newLoanApplication = await prisma.loanApplication.create({
