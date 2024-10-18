@@ -1,3 +1,10 @@
+import {
+  CreditLine,
+  Loan,
+  LoanApplication,
+  UnderwriterProfile,
+} from '@prisma/client'
+
 export type CreatePassportProfileData = {
   dynamicUserId: string
   dynamicWallet: string
@@ -17,4 +24,11 @@ export type CreatePassportProfileData = {
   socialsLinked: number
   followerCount: number
   totalLimit?: number
+}
+
+export interface PassportProfileExtended extends CreatePassportProfileData {
+  creditLine?: CreditLine
+  loans: Loan[]
+  loanApplications: LoanApplication[]
+  underwriterProfile?: UnderwriterProfile
 }

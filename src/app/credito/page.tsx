@@ -13,11 +13,19 @@ import Ecosistema from '@/components/Ecosistema'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPassportProfile } from '@/services/passportProfile'
 import { useAccount } from 'wagmi'
+import { PassportProfileExtended } from '@/types/api'
+import { useBalanceOf } from '@/hooks/useBalanceOf'
+import { Address } from 'viem'
 
 export default function Credito() {
   const [basename, setBasename] = useState('')
   const { user } = useDynamicContext()
   const { address: userAddress } = useAccount()
+  const tokenAddress = '0xa411c9Aa00E020e4f88Bc19996d29c5B7ADB4ACf' // $XOC address
+  const { balance } = useBalanceOf({
+    tokenAddress,
+    walletAddress: userAddress as Address,
+  })
 
   const { data: passportProfileData } = useQuery({
     queryKey: ['passportProfileKey'],
@@ -53,7 +61,13 @@ export default function Credito() {
           </div>
           <div className="grid w-full grid-cols-1 gap-4 px-8 md:max-w-screen-sm lg:max-w-screen-md lg:grid-cols-3 lg:px-0 xl:mx-8 xl:max-w-screen-lg">
             <Suspense>
-              <Prestamo />
+              <Prestamo
+                totalLimit={
+                  (passportProfileData as unknown as PassportProfileExtended)
+                    ?.creditLine?.totalLimit
+                }
+                xocBalance={Number(balance) ?? 0}
+              />
             </Suspense>
             <SynopsisCredito />
             <Talent />
