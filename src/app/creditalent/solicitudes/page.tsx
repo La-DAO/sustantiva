@@ -40,7 +40,10 @@ const mockLoanApplications: LoanAppExtended[] = [
     reviewedById: null,
     applicant: {
       id: 123,
-      walletId: '0x123456789abcdef...',
+      dynamicUserId: '2034fj3qjf',
+      dynamicWallet: '0x123456789abcdef...',
+      mainWallet: '0x123456789abcdef...',
+      verifiedWallets: [],
       talentPassportId: 456,
       talentUserId: 'user123',
       name: 'Alice',
@@ -78,7 +81,10 @@ const mockLoanApplications: LoanAppExtended[] = [
     reviewedById: null,
     applicant: {
       id: 456,
-      walletId: '0xabcdef0123456789...',
+      dynamicUserId: '2034fj3qjf',
+      dynamicWallet: '0x123456789abcdef...',
+      mainWallet: '0x123456789abcdef...',
+      verifiedWallets: [],
       talentPassportId: 789,
       talentUserId: 'user456',
       name: 'Bob',

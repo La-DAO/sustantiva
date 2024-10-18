@@ -14,7 +14,7 @@ type UseFormReturn<T> = {
   handleFileInput: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-const useForm = <T extends Record<string, any>>(
+const useForm = <T extends Record<string, unknown>>(
   initialState: T,
 ): UseFormReturn<T> => {
   const [form, setForm] = useState<FormState<T>>(initialState)

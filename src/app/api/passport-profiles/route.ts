@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import {
   createPassportProfile,
-  getPassportProfileById,
   getAllPassportProfiles,
   updatePassportProfileById,
   deletePassportProfileById,
