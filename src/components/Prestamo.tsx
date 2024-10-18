@@ -11,21 +11,78 @@ import { Button } from '@/components/ui/button'
 //import { Input } from "@/components/ui/input"
 import { Slider } from '@/components/ui/slider'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Wallet } from 'lucide-react'
+import { LoaderCircle, Wallet } from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import { createLoanApplication } from '@/services/loanApplication'
+import { useRouter } from 'next/navigation'
+import { PassportProfileExtended } from '@/types/api'
+import { toast } from 'sonner'
 
 export default function Prestamo({
   totalLimit = 0,
   xocBalance = 0,
+  passportProfile,
 }: {
   totalLimit?: number
   xocBalance?: number
+  passportProfile: PassportProfileExtended
 }) {
   const [loanAmount, setLoanAmount] = useState(totalLimit ?? 0)
   const [toggleValue, setToggleValue] = useState('prestamo')
+  const router = useRouter()
   const maxLoan = totalLimit ?? 0
 
   const handleSliderChange = (value: number[]) => {
     setLoanAmount(Math.round(value[0]))
+  }
+
+  const { mutateAsync: createLoanApp, status } = useMutation({
+    mutationFn: createLoanApplication,
+    onSuccess: (data) => {
+      console.log(data)
+      if (Boolean(data)) {
+        console.log('Solicitud de préstamo creada')
+        toast.success('Solicitud de préstamo creada exitosamente')
+        router.push('/creditalent/solicitudes')
+      }
+    },
+    onError: (error: unknown) => {
+      console.error('Error creating loan application:', error)
+    },
+  })
+
+  async function handleCreateLoanApplication() {
+    if (loanAmount < 100) {
+      return toast.warning('Solicitud de préstamo: mínimo $100 mxn')
+    }
+    if (!passportProfile.id) {
+      return toast.warning(
+        'No se detectó sesión, por favor inicia sesión de nuevo',
+      )
+    }
+    if (!passportProfile.creditLine?.id) {
+      return toast.warning('No cuentas con línea de crédito')
+    }
+
+    try {
+      await createLoanApp({
+        amount: loanAmount,
+        availableCreditLine: passportProfile.creditLine?.availableLimit ?? 0,
+        xocScore: -1,
+        builderScore: passportProfile.score ?? 0,
+        nominationsReceived: passportProfile.nominationsReceived ?? 0,
+        followers: passportProfile.followerCount ?? 0,
+        walletId: passportProfile.dynamicWallet ?? '',
+        applicantId: passportProfile.id,
+        creditLineId: passportProfile.creditLine?.id,
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error submitting form:', error.message)
+      } else {
+        console.error('An unknown error occurred during form submission')
+      }
+    }
   }
 
   return (
@@ -76,6 +133,7 @@ export default function Prestamo({
           <div className="mb-2">
             <Slider
               max={maxLoan}
+              min={100}
               step={1}
               value={[loanAmount]}
               onValueChange={handleSliderChange}
@@ -89,7 +147,16 @@ export default function Prestamo({
       </CardContent>
       <CardFooter>
         <div className="mx-auto flex items-center justify-center gap-x-6">
-          <Button className="text-lg">Solicitar préstamo</Button>
+          <Button
+            className="text-lg"
+            disabled={status === 'pending'}
+            onClick={handleCreateLoanApplication}
+          >
+            {status === 'pending' ? 'Solicitando...' : 'Solicitar préstamo'}
+            {status === 'pending' && (
+              <LoaderCircle className="ml-2 h-6 w-6 animate-spin text-white" />
+            )}
+          </Button>
         </div>
       </CardFooter>
     </Card>

@@ -16,6 +16,8 @@ import { useAccount } from 'wagmi'
 import { PassportProfileExtended } from '@/types/api'
 import { useBalanceOf } from '@/hooks/useBalanceOf'
 import { Address } from 'viem'
+import { Card, CardContent } from '@/components/ui/card'
+import { LoaderCircle } from 'lucide-react'
 
 export default function Credito() {
   const [basename, setBasename] = useState('')
@@ -60,15 +62,29 @@ export default function Credito() {
             </div>
           </div>
           <div className="grid w-full grid-cols-1 gap-4 px-8 md:max-w-screen-sm lg:max-w-screen-md lg:grid-cols-3 lg:px-0 xl:mx-8 xl:max-w-screen-lg">
-            <Suspense>
-              <Prestamo
-                totalLimit={
-                  (passportProfileData as unknown as PassportProfileExtended)
-                    ?.creditLine?.totalLimit
-                }
-                xocBalance={Number(balance) ?? 0}
-              />
-            </Suspense>
+            {passportProfileData ? (
+              <Suspense>
+                <Prestamo
+                  passportProfile={
+                    passportProfileData as unknown as PassportProfileExtended
+                  }
+                  totalLimit={
+                    (passportProfileData as unknown as PassportProfileExtended)
+                      ?.creditLine?.totalLimit
+                  }
+                  xocBalance={Number(balance) ?? 0}
+                />
+              </Suspense>
+            ) : (
+              <>
+                <Card className="w-full">
+                  <CardContent className="flex flex-col items-center gap-y-4 pt-6">
+                    <LoaderCircle className="h-16 w-16 animate-spin text-primary" />
+                    <h4>Obteniendo tus datos</h4>
+                  </CardContent>
+                </Card>
+              </>
+            )}
             <SynopsisCredito />
             <Talent />
           </div>

@@ -3,7 +3,7 @@
 import PageWithAppbar from '@/components/layout/pageWithAppbar'
 import { Card, CardContent } from '@/components/ui/card'
 import { BuilderScoreChart } from './builder-score-chart'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { fetchTalentPassport } from '@/controllers/talentProtocolApi'
 import { useAccount } from 'wagmi'
 import { useEffect, useState } from 'react'
@@ -23,7 +23,6 @@ export default function Reputacion() {
   const { address: userAddress } = useAccount()
   const { user } = useDynamicContext()
   const router = useRouter()
-  const queryClient = useQueryClient()
 
   const { data: talentPassportData, status: talentPassportQueryStatus } =
     useQuery({
@@ -36,7 +35,6 @@ export default function Reputacion() {
     mutationFn: createPassportProfile,
     onSuccess: (data) => {
       console.log(data)
-      queryClient.invalidateQueries({ queryKey: ['createPassportProfileKey'] })
       router.push('/credito')
     },
     onError: (error: unknown) => {
