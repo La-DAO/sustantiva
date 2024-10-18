@@ -1,7 +1,7 @@
 'use client'
 
 import PageWithAppbar from '@/components/layout/pageWithAppbar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { BuilderScoreChart } from './builder-score-chart'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchTalentPassport } from '@/controllers/talentProtocolApi'
@@ -14,31 +14,14 @@ import Link from 'next/link'
 import NoPassportCard from './noPassportCard'
 import { CREDIT_ALLOWANCE_BY_SCORE } from '@/lib/constants'
 import { createPassportProfile } from '@/services/passportProfile'
-import { Address } from 'viem'
-
-export const initialPassportProfileData = {
-  walletId: '',
-  talentPassportId: 0,
-  talentUserId: '',
-  name: '',
-  profilePictureUrl: '',
-  verified: false,
-  humanCheck: false,
-  score: 0,
-  activityScore: 0,
-  identityScore: 0,
-  skillsScore: 0,
-  nominationsReceived: 0,
-  socialsLinked: 0,
-  followerCount: 0,
-}
+import { Address, zeroAddress } from 'viem'
+import { useDynamicContext } from '@dynamic-labs/sdk-react-core'
+import { toast } from 'sonner'
 
 export default function Reputacion() {
   const [creditAllowed, setCreditAllowed] = useState(0)
-  const [passportProfileData, setPassportProfileData] = useState(
-    initialPassportProfileData,
-  )
   const { address: userAddress } = useAccount()
+  const { user } = useDynamicContext()
   const router = useRouter()
   const queryClient = useQueryClient()
 
@@ -49,18 +32,14 @@ export default function Reputacion() {
       enabled: Boolean(userAddress),
     })
 
-  const {
-    mutateAsync: createProfile,
-    status,
-    error,
-  } = useMutation({
+  const { mutateAsync: createProfile, status } = useMutation({
     mutationFn: createPassportProfile,
     onSuccess: (data) => {
       console.log(data)
       queryClient.invalidateQueries({ queryKey: ['createPassportProfileKey'] })
       router.push('/credito')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('Error creating passport profile:', error)
     },
   })
@@ -78,9 +57,15 @@ export default function Reputacion() {
   }
 
   async function handleCreatePassportProfile() {
+    if (!user?.userId) {
+      return toast.error('No session detected (no Dynamic User Id')
+    }
     try {
       await createProfile({
-        walletId: userAddress as Address,
+        dynamicUserId: user?.userId,
+        dynamicWallet: userAddress as Address,
+        mainWallet: talentPassportData?.main_wallet ?? zeroAddress,
+        verifiedWallets: talentPassportData?.verified_wallets ?? [],
         talentPassportId: talentPassportData?.passport_id ?? 0,
         talentUserId: talentPassportData?.user.id ?? '',
         name: talentPassportData?.user.name ?? '',
@@ -99,8 +84,12 @@ export default function Reputacion() {
             (acc, profile) => acc + profile.follower_count,
             0,
           ) ?? 0,
+        totalLimit: 1500,
       })
       console.log('Passport profile created successfully!')
+      toast.success(
+        'Línea de crédito creada, redirigiendo a Consola de Préstamo',
+      )
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error submitting form:', error.message)
@@ -122,7 +111,7 @@ export default function Reputacion() {
   return (
     <PageWithAppbar>
       <div className="page gap-y-8 px-8 text-center">
-        <Card className="w-full md:w-2/3 lg:w-1/2 xl:w-2/5">
+        <Card className="w-full py-8 md:w-2/3 lg:py-4 xl:w-1/2">
           <CardContent className="flex flex-col items-center gap-y-4 pt-6">
             {talentPassportQueryStatus === 'pending' && (
               <>
@@ -137,13 +126,26 @@ export default function Reputacion() {
 
                   <div className="flex flex-col gap-y-4">
                     <p className="text-2xl">Crédito autorizado:</p>
-                    <h2>
+                    <h3>
                       $ {parseFloat(creditAllowed.toString()).toFixed(2)} MXN
-                    </h2>
+                    </h3>
                     {creditAllowed > 0 ? (
                       <div className="flex flex-col gap-y-4 py-4">
-                        <Button onClick={handleCreatePassportProfile} size="lg">
-                          Solicitar Crédito
+                        <Button
+                          onClick={handleCreatePassportProfile}
+                          size="lg"
+                          disabled={
+                            status === 'pending' || status === 'success'
+                          }
+                        >
+                          {status === 'pending'
+                            ? 'Solicitando...'
+                            : status === 'success'
+                              ? 'Redirigiendo'
+                              : 'Solicitar Crédito'}
+                          {status === 'pending' && (
+                            <LoaderCircle className="ml-2 h-6 w-6 animate-spin text-white" />
+                          )}
                         </Button>
                       </div>
                     ) : (
@@ -158,17 +160,15 @@ export default function Reputacion() {
                       </Link>
                     )}
                   </div>
-                  <Card className="w-full md:w-2/3 lg:w-1/2 xl:w-2/5">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Talent Passport</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-x-4">
-                      <div className="w-full">
+                  <div className="w-full py-4 lg:w-4/5">
+                    <h3 className="w-full lg:text-left">Talent Passport</h3>
+                    <div className="grid grid-cols-1 gap-x-4 lg:grid-cols-2">
+                      <div className="-mt-4 w-full lg:mt-0">
                         <BuilderScoreChart
                           builderScore={talentPassportData?.score ?? 0}
                         />
                       </div>
-                      <div className="px-6">
+                      <div className="px-8 md:px-16 lg:flex lg:items-center lg:justify-start lg:px-0">
                         <ul className="text-left">
                           <li className="text-xl font-semibold">
                             Actividad: {talentPassportData?.activity_score}
@@ -199,8 +199,8 @@ export default function Reputacion() {
                           )}
                         </ul>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <NoPassportCard />

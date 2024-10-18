@@ -19,12 +19,11 @@ export default function Credito() {
   const { user } = useDynamicContext()
   const { address: userAddress } = useAccount()
 
-  const { data: passportProfileData, status: passportProfileQueryStatus } =
-    useQuery({
-      queryKey: ['passportProfileKey'],
-      queryFn: () => fetchPassportProfile(userAddress as string),
-      enabled: Boolean(userAddress),
-    })
+  const { data: passportProfileData } = useQuery({
+    queryKey: ['passportProfileKey'],
+    queryFn: () => fetchPassportProfile(userAddress as string),
+    enabled: Boolean(userAddress),
+  })
 
   console.log(passportProfileData)
 
