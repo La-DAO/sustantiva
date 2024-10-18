@@ -15,9 +15,12 @@ datasource db {
 
 model PassportProfile {
   id                      Int                 @id @default(autoincrement())
-  walletId                String
-  talentPassportId        Int
-  talentUserId            String
+  dynamicUserId           String              @unique
+  dynamicWallet           String              @unique
+  mainWallet              String              @unique
+  verifiedWallets         String[]
+  talentPassportId        Int                 @unique
+  talentUserId            String              @unique
   name                    String
   profilePictureUrl       String
   verified                Boolean
@@ -38,7 +41,7 @@ model PassportProfile {
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
 
-  @@index([walletId, talentPassportId, talentUserId, name])
+  @@index([dynamicUserId, dynamicWallet, mainWallet, talentPassportId, talentUserId, name])
 }
 
 model UnderwriterProfile {

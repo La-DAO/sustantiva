@@ -1,5 +1,8 @@
 export type CreatePassportProfileData = {
-  walletId: string
+  dynamicUserId: string
+  dynamicWallet: string
+  mainWallet: string
+  verifiedWallets: string[]
   talentPassportId: number
   talentUserId: string
   name: string
@@ -13,4 +16,5 @@ export type CreatePassportProfileData = {
   nominationsReceived: number
   socialsLinked: number
   followerCount: number
+  totalLimit?: number
 }
