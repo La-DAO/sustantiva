@@ -15,6 +15,16 @@ export const createLoanApplication = async (data: {
   creditLineId: number
 }) => {
   try {
+    const existingLoanApplication = await prisma.loanApplication.findFirst({
+      where: {
+        AND: [{ applicantId: data.applicantId }, { status: 'PENDING' }],
+      },
+    })
+    if (existingLoanApplication) {
+      throw new Error(
+        'Ya existe una solicitud de préstamo con estatus pendiente',
+      )
+    }
     const newLoanApplication = await prisma.loanApplication.create({
       data,
     })
