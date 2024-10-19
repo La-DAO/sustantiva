@@ -54,3 +54,17 @@ export interface LoanApplicationExtended extends CreateLoanApplicationData {
   applicant: PassportProfileExtended
   reviewedBy?: UnderwriterProfile
 }
+
+export type UpdateLoanApplicationByIdData = {
+  id: number
+  amount?: number
+  availableCreditLine?: number
+  xocScore?: number
+  builderScore?: number
+  nominationsReceived?: number
+  followers?: number
+  walletId?: string
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED'
+  reviewedById?: number
+  applicantId?: number
+}

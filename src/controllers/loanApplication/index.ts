@@ -93,7 +93,9 @@ export const updateLoanApplicationById = async (
   try {
     const updatedLoanApplication = await prisma.loanApplication.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+      },
     })
     return updatedLoanApplication
   } catch (error) {

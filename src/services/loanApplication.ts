@@ -1,4 +1,7 @@
-import { CreateLoanApplicationData } from '@/types/api'
+import {
+  CreateLoanApplicationData,
+  UpdateLoanApplicationByIdData,
+} from '@/types/api'
 import { LoanApplication } from '@prisma/client'
 
 export const fetchLoanApplications =
@@ -52,6 +55,36 @@ export const createLoanApplication = async (
   } catch (error) {
     console.log(error)
     console.error('Error creating loan application:', error)
+    return null
+  }
+}
+
+export const updateLoanApplication = async (
+  data: UpdateLoanApplicationByIdData,
+) => {
+  try {
+    const response = await fetch('/api/loan-applications', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    // Check if the response is successful
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || 'Failed to create loan application')
+    }
+
+    const resData = await response.json() // Return the response data
+
+    console.log(resData)
+
+    return resData
+  } catch (error) {
+    console.log(error)
+    console.error('Error updating loan application:', error)
     return null
   }
 }
