@@ -6,7 +6,6 @@ import { WhitelistTable, CreditRequest } from './white-list-table'
 import UnderWriterDepositWidget from './underWriterDepositWidget' // Assuming it's in the same folder
 import Link from 'next/link'
 
-
 async function getData(): Promise<CreditRequest[]> {
   // Mock data (same as before)
   const data = [
@@ -101,7 +100,7 @@ export default function SolicitudesCredito() {
     <PageWithAppbar>
       <div className="page gap-y-8 px-8 text-center">
         <h2>Consola del Prestamista</h2>
-        <div className="flex flex-col lg:flex-row justify-between gap-8">
+        <div className="flex flex-col justify-between gap-8 lg:flex-row">
           {/* Left Column: UnderWriterDepositWidget */}
           <div className="w-full lg:w-1/2">
             <UnderWriterDepositWidget />

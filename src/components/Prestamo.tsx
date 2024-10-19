@@ -8,19 +8,19 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-//import { Input } from "@/components/ui/input"
 import { Slider } from '@/components/ui/slider'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { LoaderCircle, Wallet } from 'lucide-react'
+import { ExternalLinkIcon, LoaderCircle, Wallet } from 'lucide-react'
 import { useMutation } from '@tanstack/react-query'
 import { createLoanApplication } from '@/services/loanApplication'
-import { useRouter } from 'next/navigation'
 import { PassportProfileExtended } from '@/types/api'
 import { toast } from 'sonner'
-import { useWriteContract } from 'wagmi'
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import CreditTalentCenterABI from '@/components/onchain/abis/CreditTalentCenter'
-import { toHex, pad } from 'viem';
-
+import { toHex, pad } from 'viem'
+import { LoanApplication } from '@prisma/client'
+import { useDynamicContext } from '@dynamic-labs/sdk-react-core'
+import Link from 'next/link'
 
 export default function Prestamo({
   totalLimit = 0,
@@ -33,24 +33,34 @@ export default function Prestamo({
 }) {
   const [loanAmount, setLoanAmount] = useState(totalLimit ?? 0)
   const [toggleValue, setToggleValue] = useState('prestamo')
-  const router = useRouter()
+  const { primaryWallet } = useDynamicContext()
+
   const maxLoan = totalLimit ?? 0
 
-  const { writeContract, data, isSuccess } = useWriteContract()
+  const { writeContractAsync, data: hash, isSuccess } = useWriteContract()
+
+  const { isLoading: isLoadingTxReceipt, isSuccess: isSuccessTxReceipt } =
+    useWaitForTransactionReceipt({
+      hash,
+    })
 
   const handleSliderChange = (value: number[]) => {
     setLoanAmount(Math.round(value[0]))
+  }
+
+  const convertToBytes32 = (num: number): string => {
+    return pad(toHex(num), { size: 32 })
   }
 
   const { mutateAsync: createLoanApp, status } = useMutation({
     mutationFn: createLoanApplication,
     onSuccess: (data) => {
       console.log(data)
-      if (Boolean(data)) {
-        console.log('Solicitud de préstamo creada')
-        toast.success('Solicitud de préstamo creada exitosamente')
-        router.push('/creditalent/solicitudes')
-      }
+      // if (Boolean(data)) {
+      //   console.log('Solicitud de préstamo creada')
+      //   toast.success('Solicitud de préstamo creada exitosamente')
+      //   router.push('/creditalent/solicitudes')
+      // }
     },
     onError: (error: unknown) => {
       console.error('Error creating loan application:', error)
@@ -71,7 +81,7 @@ export default function Prestamo({
     }
 
     try {
-      await createLoanApp({
+      const loanApplication: LoanApplication = await createLoanApp({
         amount: loanAmount,
         availableCreditLine: passportProfile.creditLine?.availableLimit ?? 0,
         xocScore: -1,
@@ -82,7 +92,16 @@ export default function Prestamo({
         applicantId: passportProfile.id,
         creditLineId: passportProfile.creditLine?.id,
       })
+
+      console.log(loanApplication)
+
+      if (loanApplication && loanApplication.id) {
+        await writeLoanApplication(loanApplication.id)
+      } else {
+        toast.warning('Tienes una solicitud de préstamo con estatus pendiente')
+      }
     } catch (error) {
+      console.error(error)
       if (error instanceof Error) {
         console.error('Error submitting form:', error.message)
       } else {
@@ -91,22 +110,36 @@ export default function Prestamo({
     }
   }
 
-  /*   const handleApplication = () => {
-    console.log("Antes de write contract")
+  async function writeLoanApplication(loanApplicationId: number) {
+    console.log('Antes de write contract')
+
     try {
-      writeContract({
+      if (primaryWallet?.connector.supportsNetworkSwitching()) {
+        toast.info('Cambia tu red a Base Sepolia')
+        await primaryWallet.switchNetwork(84532)
+        console.log('Success! Network switched')
+      }
+
+      const currentChainId = await primaryWallet?.getNetwork()
+      if (currentChainId !== 84532) {
+        return toast.error(
+          'Red no soportada, cambia de red y vuelva a intentar',
+        )
+      }
+
+      const hash = writeContractAsync({
         address: '0x0E44B48406b5E7Bba4E6d089542719Cb2577d444',
         abi: CreditTalentCenterABI,
         functionName: 'applyToCredit',
-        args: [`${convertToBytes32(1)}`],
+        args: [`${convertToBytes32(loanApplicationId)}`],
       })
       if (isSuccess) {
-        console.log('Application successful:', data)
+        console.log('Application successful:', hash)
       }
     } catch (error) {
       console.error('Application failed:', error)
     }
-    console.log("despues de write contract")
+    console.log('despues de write contract')
   }
 
   return (
@@ -172,17 +205,34 @@ export default function Prestamo({
       <CardFooter>
         <div className="mx-auto flex items-center justify-center gap-x-6">
           <Button
-            onClick={handleApplication}
             className="text-lg"
-            disabled={status === 'pending'}
+            disabled={status === 'pending' || isLoadingTxReceipt}
             onClick={handleCreateLoanApplication}
           >
-            {status === 'pending' ? 'Solicitando...' : 'Solicitar préstamo'}
+            {isLoadingTxReceipt
+              ? 'Firmando...'
+              : status === 'pending'
+                ? 'Solicitando...'
+                : 'Solicitar préstamo'}
             {status === 'pending' && (
               <LoaderCircle className="ml-2 h-6 w-6 animate-spin text-white" />
             )}
           </Button>
         </div>
+        {hash && (
+          <div className="flex flex-col items-center pt-8">
+            <Link
+              className="flex items-center gap-x-1.5 hover:text-accent"
+              href={`https://polygonscan.com/tx/${hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View tx on explorer <ExternalLinkIcon className="h4 w-4" />
+            </Link>
+            {isLoadingTxReceipt && <div>Enviando solicitud...</div>}
+            {isSuccessTxReceipt && <div>Solicitud enviada</div>}
+          </div>
+        )}
       </CardFooter>
     </Card>
   )
