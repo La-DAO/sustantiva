@@ -15,26 +15,11 @@ import { Button } from '@/components/ui/button'
 import { useQuery } from '@tanstack/react-query'
 import { fetchLoanApplications } from '@/services/loanApplication'
 import { LoanApplicationExtended } from '@/types/api'
+import { DenyModalButton } from '@/components/onchain/denyModalButton'
+import { ApproveModalButton } from '@/components/onchain/approveModalButton'
+import UnderwriterModal from '@/components/onchain/underwriterModal'
 
-const handleApprove = async (loanAplication: LoanApplicationExtended) => {
-  console.log('🚀 ~ handleApprove ~ loanAplication:', loanAplication)
-  try {
-    // TODO: call to contract approve
-  } catch (error) {
-    console.error('Error approving address:', error)
-  }
-}
-
-const handleDeny = async (loanAplication: LoanApplicationExtended) => {
-  console.log('🚀 ~ handleDeny ~ loanAplication:', loanAplication)
-  try {
-    // TODO: call to contract deny
-  } catch (error) {
-    console.error('Error denying address:', error)
-  }
-}
-
-export default function WhiteList() {
+export default function Solicitudes() {
   const { data: loanApplicationsData, status: loanApplicationsQueryStatus } =
     useQuery({
       queryKey: ['loanApplicationsKey'],
@@ -45,6 +30,9 @@ export default function WhiteList() {
     <PageWithAppbar>
       <div className="page gap-y-8 px-8 text-center">
         <h2>Solicitudes</h2>
+        <div className="flex w-full justify-center">
+          <UnderwriterModal />
+        </div>
         {/* Table Structure */}
         {loanApplicationsQueryStatus === 'pending' ? (
           <div className="text-center">Cargando...</div>
@@ -52,6 +40,7 @@ export default function WhiteList() {
           <Table className="w-full border-collapse hover:bg-transparent">
             <TableHeader className="bg-foreground text-white">
               <TableRow className="hover:bg-transparent">
+                <TableHead className="text-center text-white">id</TableHead>
                 <TableHead className="text-center text-white">Humano</TableHead>
                 <TableHead className="text-center text-white">Nombre</TableHead>
                 <TableHead className="text-center text-white">
@@ -83,6 +72,7 @@ export default function WhiteList() {
                 loanApplicationsData as unknown as LoanApplicationExtended[]
               )?.map((item) => (
                 <TableRow key={item?.id}>
+                  <TableCell className="text-center">{item.id}</TableCell>
                   <TableCell className="">
                     {item?.applicant?.humanCheck ? (
                       <p className="text-xl font-bold text-green-700">✅</p>
@@ -93,8 +83,8 @@ export default function WhiteList() {
                   <TableCell>
                     <div className="flex items-center gap-x-2 py-1 text-left">
                       <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarImage src={item.applicant.profilePictureUrl} />
+                        <AvatarFallback>{item.applicant.name}</AvatarFallback>
                       </Avatar>
                       {item?.applicant?.name}
                     </div>
@@ -114,20 +104,8 @@ export default function WhiteList() {
                   </TableCell>
                   <TableCell>
                     <div className="flex justify-center gap-2">
-                      <Button
-                        variant="outline"
-                        className="border-secondary hover:bg-secondary/60"
-                        onClick={() => handleApprove(item)}
-                      >
-                        Aprobar
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="border-primary hover:bg-primary/60"
-                        onClick={() => handleDeny(item)}
-                      >
-                        Denegar
-                      </Button>
+                      <ApproveModalButton loanApplication={item} />
+                      <DenyModalButton loanApplication={item} />
                     </div>
                   </TableCell>
                 </TableRow>
