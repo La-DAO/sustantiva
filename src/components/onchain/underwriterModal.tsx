@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Address, formatUnits, parseEther } from 'viem'
-import { useAccount, useReadContract, useWriteContract } from 'wagmi'
+import {
+  useAccount,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi'
 import { useBalanceOf } from '@/hooks/useBalanceOf'
 import { ERC20ABI } from '@/components/onchain/abis/erc20'
 import CreditTalentCenterABI from '@/components/onchain/abis/CreditTalentCenter'
@@ -26,10 +31,16 @@ export default function UnderwriterModal() {
   const [xocError, setXocError] = useState<string | null>(null)
   const [requiresApproval, setRequiresApproval] = useState(false) // Track approval need
 
-  const { writeContract: deposit } = useWriteContract()
-  const { writeContract: approveERC20 } = useWriteContract()
-  const { writeContract: withdraw } = useWriteContract()
+  const { writeContractAsync: deposit } = useWriteContract()
+  const { writeContractAsync: approveERC20, data: approveHash } =
+    useWriteContract()
+  const { writeContractAsync: withdraw } = useWriteContract()
 
+  const { isSuccess: isSuccessApproveTxReceipt } = useWaitForTransactionReceipt(
+    {
+      hash: approveHash,
+    },
+  )
   const xocBalance = useBalanceOf({
     tokenAddress: xocContract,
     walletAddress: accountAddress as Address,
@@ -217,7 +228,7 @@ export default function UnderwriterModal() {
           onClick={() => {
             if (requiresApproval) {
               handleApproval() // Call handleApproval when approval is needed
-            } else if (action === 'Deposit' && !xocError) {
+            } else if (action === 'Deposit' && isSuccessApproveTxReceipt) {
               handleDeposit() // Call handleDeposit if deposit is selected
             } else if (action === 'Withdraw' && !xocError) {
               handleWithdrawal() // Call handleWithdrawal if withdraw is selected
