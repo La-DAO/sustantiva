@@ -28,6 +28,7 @@ const ERC20ABI = [
 interface TokenBalanceProps {
   tokenAddress: Address
   walletAddress: Address
+  chainId?: number
 }
 
 /**
@@ -39,6 +40,7 @@ interface TokenBalanceProps {
 export function useBalanceOf({
   tokenAddress,
   walletAddress,
+  chainId = 8453,
 }: TokenBalanceProps) {
   const [balance, setBalance] = useState<string>('0') // State to store the balance
   const [decimals, setDecimals] = useState<number>(18) // Default to 18 decimals
@@ -54,6 +56,7 @@ export function useBalanceOf({
     abi: ERC20ABI,
     functionName: 'balanceOf',
     args: [walletAddress],
+    chainId,
   })
 
   // Hook to read the decimals from the contract
@@ -65,6 +68,7 @@ export function useBalanceOf({
     address: tokenAddress,
     abi: ERC20ABI,
     functionName: 'decimals',
+    chainId,
   })
 
   // Effect to handle updates to data, error, and loading state

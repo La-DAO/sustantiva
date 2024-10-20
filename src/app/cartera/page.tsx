@@ -4,7 +4,10 @@ import Link from 'next/link'
 
 import PageWithAppbar from '@/components/layout/pageWithAppbar'
 import { Button } from '@/components/ui/button'
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core'
+import {
+  useDynamicContext,
+  useSwitchNetwork,
+} from '@dynamic-labs/sdk-react-core'
 import {
   Card,
   CardContent,
@@ -13,7 +16,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { ArrowLeftRight, LoaderCircle, PiggyBank } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CarteraWidget from '@/components/onchain/carteraWidget'
 import { useBalanceOf } from '@/hooks/useBalanceOf'
 import { useAccount } from 'wagmi'
@@ -23,15 +26,30 @@ import AhorraModalButton from '@/components/ux/ahorraModalButton'
 
 export default function Cartera() {
   const [basename, setBasename] = useState('')
-  const { user } = useDynamicContext()
+  const [isSwitchingNetwork, setIsSwitchingNetwork] = useState(false)
+  const { user, primaryWallet } = useDynamicContext()
+  const switchNetwork = useSwitchNetwork()
 
-  const { address: walletAddress } = useAccount()
+  const { address: walletAddress, chainId } = useAccount()
   const tokenAddress = '0xa411c9Aa00E020e4f88Bc19996d29c5B7ADB4ACf' // $XOC address
 
   const { balance, balanceStatus } = useBalanceOf({
     tokenAddress,
     walletAddress: walletAddress as Address,
   })
+
+  useEffect(() => {
+    async function handleSwitchNetwork() {
+      if (primaryWallet) {
+        setIsSwitchingNetwork(true)
+        await switchNetwork({ wallet: primaryWallet, network: 8453 })
+      }
+    }
+
+    if (primaryWallet && chainId !== 8453 && !isSwitchingNetwork) {
+      handleSwitchNetwork()
+    }
+  }, [chainId, isSwitchingNetwork, primaryWallet, switchNetwork])
 
   return (
     <PageWithAppbar>
