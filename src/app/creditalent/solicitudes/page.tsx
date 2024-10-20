@@ -18,13 +18,37 @@ import { LoanApplicationExtended } from '@/types/api'
 import { DenyModalButton } from '@/components/onchain/denyModalButton'
 import { ApproveModalButton } from '@/components/onchain/approveModalButton'
 import UnderwriterModal from '@/components/onchain/underwriterModal'
+import { useEffect, useState } from 'react'
+import {
+  useDynamicContext,
+  useSwitchNetwork,
+} from '@dynamic-labs/sdk-react-core'
+import { useAccount } from 'wagmi'
 
 export default function Solicitudes() {
+  const [isSwitchingNetwork, setIsSwitchingNetwork] = useState(false)
+  const { primaryWallet } = useDynamicContext()
+  const switchNetwork = useSwitchNetwork()
+  const { chainId } = useAccount()
+
   const { data: loanApplicationsData, status: loanApplicationsQueryStatus } =
     useQuery({
       queryKey: ['loanApplicationsKey'],
       queryFn: () => fetchLoanApplications(),
     })
+
+  useEffect(() => {
+    async function handleSwitchNetwork() {
+      if (primaryWallet) {
+        setIsSwitchingNetwork(true)
+        await switchNetwork({ wallet: primaryWallet, network: 84532 })
+      }
+    }
+
+    if (primaryWallet && chainId !== 84532 && !isSwitchingNetwork) {
+      handleSwitchNetwork()
+    }
+  }, [chainId, isSwitchingNetwork, primaryWallet, switchNetwork])
 
   return (
     <PageWithAppbar>

@@ -1,4 +1,5 @@
 import prisma from '@/utils/prisma'
+import { Loan } from '@prisma/client'
 
 // Create a new LoanApplication
 export const createLoanApplication = async (data: {
@@ -90,6 +91,7 @@ export const updateLoanApplicationById = async (
     applicantId: number
   }>,
 ) => {
+  let loan: Loan | null = null
   try {
     const updatedLoanApplication = await prisma.loanApplication.update({
       where: { id },
@@ -97,7 +99,26 @@ export const updateLoanApplicationById = async (
         ...data,
       },
     })
-    return updatedLoanApplication
+    if (
+      data.status === 'PENDING' &&
+      updatedLoanApplication.status === 'APPROVED'
+    ) {
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 30)
+
+      loan = await prisma.loan.create({
+        data: {
+          amount: updatedLoanApplication.amount,
+          pendingBalance: updatedLoanApplication.amount,
+          dueDate: futureDate,
+          walletId: updatedLoanApplication.walletId,
+          borrowerId: updatedLoanApplication.applicantId,
+          creditLineId: updatedLoanApplication.creditLineId,
+          loanApplicationId: updatedLoanApplication.id,
+        },
+      })
+    }
+    return { updatedLoanApplication, loan }
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error updating LoanApplication: ${error.message}`)

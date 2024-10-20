@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Address, formatUnits, parseEther } from 'viem'
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
-import { useBalanceOf } from '../../../hooks/useBalanceOf'
+import { useBalanceOf } from '@/hooks/useBalanceOf'
 import { ERC20ABI } from '@/components/onchain/abis/erc20'
 import CreditTalentCenterABI from '@/components/onchain/abis/CreditTalentCenter'
 
@@ -24,6 +24,7 @@ export default function UnderWriterDepositWidget() {
   const xocBalance = useBalanceOf({
     tokenAddress: xocContract,
     walletAddress: accountAddress as Address,
+    chainId: 8453,
   })
 
   const formatBalance = (balance: string) => {
@@ -31,10 +32,16 @@ export default function UnderWriterDepositWidget() {
     return isNaN(parsedBalance) ? '0.00' : parsedBalance
   }
 
-  const formattedXocBalance = xocBalance ? formatBalance(xocBalance.balance) : '0.00'
+  const formattedXocBalance = xocBalance
+    ? formatBalance(xocBalance.balance)
+    : '0.00'
 
   // Hook to read the XOC contract allowance
-  const { data: xocAllowance, isError, isLoading } = useReadContract({
+  const {
+    data: xocAllowance,
+    isError,
+    isLoading,
+  } = useReadContract({
     address: xocContract,
     abi: ERC20ABI,
     functionName: 'allowance',
@@ -163,7 +170,9 @@ export default function UnderWriterDepositWidget() {
       {/* Input field */}
       <div className="mb-6">
         <label className="block text-gray-700">
-          {action === 'Deposit' ? 'Indica la cantidad a depositar:' : 'Indica la cantidad a retirar:'}
+          {action === 'Deposit'
+            ? 'Indica la cantidad a depositar:'
+            : 'Indica la cantidad a retirar:'}
         </label>
         <input
           type="number"
@@ -175,13 +184,17 @@ export default function UnderWriterDepositWidget() {
         <div className="flex flex-col items-start justify-between">
           <div className="mb-2">
             <span className="mr-1 text-gray-500">{`Balance: ${formattedXocBalance || 0}`}</span>
-            <span className="cursor-pointer font-bold text-primary hover:underline" onClick={handleXOCMaxClick}>
+            <span
+              className="cursor-pointer font-bold text-primary hover:underline"
+              onClick={handleXOCMaxClick}
+            >
               MAX
             </span>
           </div>
           <div className="text-gray-500">{`Allowance: ${xocAllowanceState}`}</div>
         </div>
-        {xocError && <p className="mt-2 text-red-500">{xocError}</p>} {/* Display error */}
+        {xocError && <p className="mt-2 text-red-500">{xocError}</p>}{' '}
+        {/* Display error */}
       </div>
 
       {/* Submit button */}
@@ -197,7 +210,12 @@ export default function UnderWriterDepositWidget() {
           }
         }}
       >
-        {requiresApproval ? 'Aprobar' : action === 'Deposit' ? 'Depositar' : 'Retirar'} {/* Dynamic button label */}
+        {requiresApproval
+          ? 'Aprobar'
+          : action === 'Deposit'
+            ? 'Depositar'
+            : 'Retirar'}{' '}
+        {/* Dynamic button label */}
       </button>
     </div>
   )
